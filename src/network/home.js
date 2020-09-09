@@ -6,7 +6,7 @@ let timestamp = new Date().getTime()
 let sign = MD5('huodie2020' + timestamp)
 
 
-export function _homeApi(config) {
+export function _getstoreApi(config) {
   // config.data.timestamp = new Date().getTime()
   // config.data.sign = MD5('huodie2020' + config.data.timestamp)
   // config.data.timestamp = timestamp
@@ -70,7 +70,7 @@ export function _notesApi() {
 }
 
 // 获取首页报单
-export function _singleApi() {
+export function a() {
   return requestPost({
     params: {
       action: 'tips'

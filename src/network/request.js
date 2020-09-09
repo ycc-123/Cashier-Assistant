@@ -8,7 +8,7 @@ export function request(config) {
   // 1.创建axios的实例
   const instance = axios.create({
     // 测试站
-    baseURL: 'http://dev.huodiesoft.com/wechat_api.php',
+    baseURL: 'https://dev.huodiesoft.com/posdataapi.php',
     // 正式站
 
     timeout: 1000
@@ -111,7 +111,7 @@ export function requestPost(config) {
     const instance = axios.create({
       timeout: 10000,
       // 测试站
-      baseURL: baseUrl + 'wechat_users_api.php',
+      baseURL: baseUrl + 'posdataapi.php',
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       data: config.data
