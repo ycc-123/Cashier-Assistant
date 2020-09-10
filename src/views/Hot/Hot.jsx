@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-
 import { List, Picker ,DatePicker} from 'antd-mobile';
+// import axios from 'axios'
+import {WW} from 'network/home';
 
 export default class Hot extends Component {
+        
     constructor() {
         super()
         this.state = {
@@ -21,7 +23,15 @@ export default class Hot extends Component {
             key: index
         })
     }
-    componentDidMount() {
+
+
+ componentDidMount() {
+    console.log(111)
+
+
+    WW().then(res => {
+        console.log(111)
+    })
 
 
         this.setState({
@@ -36,33 +46,53 @@ export default class Hot extends Component {
 
                         <span className='right-img'></span>
                         <div className='h_conten'>
+                            <div>&nbsp;</div>
                             <div className='h_one_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/fGWhsQ01gNNNESUH55S95Z0aUUHGH1.png" alt="" /></div>
-                            <div className='h_wen'>全部门店</div>
+                            <div className='h_wen' style={{color:"#fff"}}>全部门店</div>
                             <div className='h_two_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/zltxzLUIITsQVlXv7AUV2XUVtXII4M.png" alt="" /></div>
                         </div>
-                        <Picker data={[
+                        <Picker 
+                        extra="全部门店"
+                        data={[
                             {
                                 value: 1,
                                 label: 1
                             }
                         ]} cols={1} className="forss">
-                            <List.Item arrow="horizontal" className='time'></List.Item>
+                            <List.Item arrow="horizontal" className='time' 
+                            style={{width:"2.3rem",backgroundColor:"transparent",position:"absolute",top:"-.07rem",left:"3.6rem"}}></List.Item>
                         </Picker>
                     </div>
-                    <div>
-                    </div>
 
-                    <div className=''>
+                    
+                    <div style={{display:"flex"}}>
+                    <div className='start'>
                         <DatePicker
                             mode="date"
-                            title="Select Date"
-                            extra="Optional"
+                            title=""
+                            extra="2020-09-10"
+                            onOk={console.log(this.state.date)}
                             value={this.state.date}
                             onChange={date => this.setState({ date })}
                         >
-                            <List.Item arrow="horizontal" className='data'>Date</List.Item>
+                            <List.Item arrow="horizontal" className='data'></List.Item>
                         </DatePicker>
                     </div>
+                    <span style={{fontSize:".5rem",paddingTop:".5rem"}}>&nbsp;~</span>
+                    <div className='end'>
+                        <DatePicker
+                            mode="date"
+                            title=""
+                            extra="2020-09-10"
+                            onOk={console.log(this.state.date)}
+                            value={this.state.date}
+                            onChange={date => this.setState({ date })}
+                        >
+                            <List.Item arrow="horizontal" className='data'></List.Item>
+                        </DatePicker>
+                    </div>
+                    </div>
+
 
 
                     <div className='conten'>
@@ -77,6 +107,7 @@ export default class Hot extends Component {
                             }
                         </ul>
                     </div>
+                
                 </div>
             </HotStyle>
         )
@@ -84,15 +115,23 @@ export default class Hot extends Component {
 }
 
 const HotStyle = styled.div`
+.start{
+    margin-left:2rem;
+}
+
 .data{
-    background-color: red;
+    background-color:#f9f9f9;
+    padding:0;
+    margin:0;
+    width:2.5rem;
 }
 .am-list-item time am-list-item-middle{
     width:12rem;
 }
 .am-list-item .am-list-line .am-list-extra{
-
-    color:#fff;
+    position:absolute;
+    right:.1rem;
+    color:#474747;
     text-align: left;
     font-size:.4rem;
     padding-left:.1rem;
@@ -102,13 +141,7 @@ const HotStyle = styled.div`
     background-image: none;
     opacity:0;
 }
-.time{
-    position:absolute;
-    left:4rem;
-    top:-.3rem;
-    color: transparent;
-    background-color: transparent;
-}
+
 .am-list-arrow am-list-arrow-horizontal{
     background-image: none;
     opacity:0;
@@ -145,6 +178,7 @@ const HotStyle = styled.div`
     height:100%;
   }
   .h_one_img{
+    // margin-left:.2rem;
     margin-top:.2rem;
     width:.5rem;
     height:.5rem;

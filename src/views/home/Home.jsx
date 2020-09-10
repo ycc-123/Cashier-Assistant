@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
+import { List, Picker, DatePicker } from 'antd-mobile';
 
 
 import TabBar from 'common/tabBar/TabBar'
 import styled from 'styled-components'
-import {  DatePicker, List } from "antd-mobile";
+
 
 
 
@@ -13,11 +14,29 @@ import './style/home.css'
 
 
 class Home extends Component {
-  constructor(){
+  constructor() {
     super()
-    this.state={
-      date:''
+    this.state = {
+      bgcolor: "",
+      date_month: [],
+      key: "",
+      value: null,
+      date: ''
     }
+  }
+  active(e, index) {
+    this.setState({
+      bgcolor: "#2e5bff",
+      color: "#fff",
+      key: index
+    })
+  }
+  componentDidMount() {
+
+
+    this.setState({
+      date_month: ["昨天", "今天", "本周", "本月"]
+    })
   }
   render() {
 
@@ -31,42 +50,88 @@ class Home extends Component {
               <img src="https://res.lexiangpingou.cn/images/826/2020/04/zZWiIZSwf62zisqkp7s7ij6ipypwri.png" alt="" />
             </span>
             <div className='h_conten'>
+              <div>&nbsp;</div>
               <div className='h_one_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/fGWhsQ01gNNNESUH55S95Z0aUUHGH1.png" alt="" /></div>
-              <div className='h_wen'>全部门店</div>
+              <div className='h_wen' style={{ color: "#fff" }}>全部门店</div>
               <div className='h_two_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/zltxzLUIITsQVlXv7AUV2XUVtXII4M.png" alt="" /></div>
             </div>
+            <Picker
+              extra="全部门店"
+              data={[
+                {
+                  value: 1,
+                  label: 1
+                }
+              ]} cols={1} className="forss">
+              <List.Item arrow="horizontal" className='time'
+                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
+            </Picker>
+
             <span className='left-img'>
               <img src="https://res.lexiangpingou.cn/images/826/2020/04/QahvVu2Bs6zPy6t6Ufb82ABa2PuNXh.png" alt="" />
             </span>
           </div>
-            <div style={{width:"7rem",height:"1rem"}}>
-            <DatePicker
-              className='aaa'
-              mode="date"
-              extra="2019-09-14"
-              onOk={console.log()}
-              value={this.state.date}
-              onChange={date => this.setState({
-                date,
-              })}
-            >
-              <List.Item onClick={this.time} className='time' name="birthDay" arrow="horizontal" ></List.Item>
-            </DatePicker>
+          <div>
+            <Picker
+              extra="全部门店"
+              data={[
+                {
+                  value: 1,
+                  label: 1
+                }
+              ]} cols={1} className="forss">
+              <List.Item arrow="horizontal" className='time'
+                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
+            </Picker>
+          </div>
+
+
+
+          <div style={{ display: "flex" }}>
+            <div className='start'>
+              <DatePicker
+                mode="date"
+                title=""
+                extra="2020-09-10"
+                onOk={console.log(this.state.date)}
+                value={this.state.date}
+                onChange={date => this.setState({ date })}
+              >
+                <List.Item arrow="horizontal" className='data'></List.Item>
+              </DatePicker>
             </div>
-            
-         
+            <span style={{ fontSize: ".5rem", paddingTop: ".5rem" }}>&nbsp;~</span>
+            <div className='end'>
+              <DatePicker
+                mode="date"
+                title=""
+                extra="2020-09-10"
+                onOk={console.log(this.state.date)}
+                value={this.state.date}
+                onChange={date => this.setState({ date })}
+              >
+                <List.Item arrow="horizontal" className='data'></List.Item>
+              </DatePicker>
+            </div>
+          </div>
 
           <div className='conten'>
-
-            <div >
-              <div className='kuaione'></div>
-              <ul className='kuaitwo'>
-                <li className='jione'></li>
-                <li className='jitwo'></li>
-              </ul>
-            </div>
-
+            <ul className='date_month'>
+              {
+                this.state.date_month.map((v, index) => {
+                  return (
+                    <li onClick={(e) => this.active(e, index)} key={v}
+                      style={{ backgroundColor: this.state.key === index ? this.state.bgcolor : '', color: this.state.key === index ? this.state.color : "" }}>{v}</li>
+                  )
+                })
+              }
+            </ul>
           </div>
+
+          <div className='homeb'>
+            <img src={require('assets/img/homeb.png')} alt=""/>
+          </div>
+
           <div className='footer'>
 
           </div>
@@ -79,6 +144,56 @@ class Home extends Component {
 }
 
 const HomeStyle = styled.div`
+.homeb img{
+  width:100%;
+  height:100%;
+}
+
+.start{
+    margin-left:2rem;
+}
+
+.data{
+    background-color:#f9f9f9;
+    padding:0;
+    margin:0;
+    width:2.5rem;
+}
+.am-list-item time am-list-item-middle{
+    width:12rem;
+}
+.am-list-item .am-list-line .am-list-extra{
+    position:absolute;
+    right:.1rem;
+    color:#474747;
+    text-align: left;
+    font-size:.4rem;
+    padding-left:.1rem;
+}
+.am-list-item .am-list-line .am-list-arrow{
+
+    background-image: none;
+    opacity:0;
+}
+
+.am-list-arrow am-list-arrow-horizontal{
+    background-image: none;
+    opacity:0;
+}
+.date_month{
+    display:flex;
+    justify-content: space-around;
+}
+.date_month li{
+    width: 2rem;
+    height: .6rem;
+    line-height: .6rem;
+    text-align:center;
+    background: #d0d9fa;
+    color: #446cfe;
+    border-radius: .5rem;
+    border: 1px solid #2e5bff;
+}
 .kuaione{
   margin:0 auto;
   width:100%;
