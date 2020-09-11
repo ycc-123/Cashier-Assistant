@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import { List, Picker ,DatePicker} from 'antd-mobile';
-// import axios from 'axios'
-import {WW} from 'network/home';
+import { List, Picker, DatePicker } from 'antd-mobile';
+import { get_store } from 'network/Api';
 
 export default class Hot extends Component {
-        
     constructor() {
         super()
         this.state = {
@@ -13,7 +11,7 @@ export default class Hot extends Component {
             date_month: [],
             key: "",
             value: null,
-            date:''
+            date: ''
         }
     }
     active(e, index) {
@@ -24,15 +22,11 @@ export default class Hot extends Component {
         })
     }
 
+    componentDidMount() {
 
- componentDidMount() {
-    console.log(111)
-
-
-    WW().then(res => {
-        console.log(111)
-    })
-
+        get_store().then(res => {
+            console.log(res)
+        })
 
         this.setState({
             date_month: ["昨天", "今天", "本周", "本月"]
@@ -48,52 +42,49 @@ export default class Hot extends Component {
                         <div className='h_conten'>
                             <div>&nbsp;</div>
                             <div className='h_one_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/fGWhsQ01gNNNESUH55S95Z0aUUHGH1.png" alt="" /></div>
-                            <div className='h_wen' style={{color:"#fff"}}>全部门店</div>
+                            <div className='h_wen' style={{ color: "#fff" }}>全部门店</div>
                             <div className='h_two_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/zltxzLUIITsQVlXv7AUV2XUVtXII4M.png" alt="" /></div>
                         </div>
-                        <Picker 
-                        extra="全部门店"
-                        data={[
-                            {
-                                value: 1,
-                                label: 1
-                            }
-                        ]} cols={1} className="forss">
-                            <List.Item arrow="horizontal" className='time' 
-                            style={{width:"2.3rem",backgroundColor:"transparent",position:"absolute",top:"-.07rem",left:"3.6rem"}}></List.Item>
+                        <Picker
+                            extra="全部门店"
+                            data={[
+                                {
+                                    value: 1,
+                                    label: 1
+                                }
+                            ]} cols={1} className="forss">
+                            <List.Item arrow="horizontal" className='time'
+                                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
                         </Picker>
                     </div>
-
                     
-                    <div style={{display:"flex"}}>
-                    <div className='start'>
-                        <DatePicker
-                            mode="date"
-                            title=""
-                            extra="2020-09-10"
-                            onOk={console.log(this.state.date)}
-                            value={this.state.date}
-                            onChange={date => this.setState({ date })}
-                        >
-                            <List.Item arrow="horizontal" className='data'></List.Item>
-                        </DatePicker>
+                    <div style={{ display: "flex" }}>
+                        <div className='start'>
+                            <DatePicker
+                                mode="date"
+                                title=""
+                                extra="2020-09-10"
+                                onOk={console.log(this.state.date)}
+                                value={this.state.date}
+                                onChange={date => this.setState({ date })}
+                            >
+                                <List.Item arrow="horizontal" className='data'></List.Item>
+                            </DatePicker>
+                        </div>
+                        <span style={{ fontSize: ".5rem", paddingTop: ".5rem" }}>&nbsp;~</span>
+                        <div className='end'>
+                            <DatePicker
+                                mode="date"
+                                title=""
+                                extra="2020-09-10"
+                                onOk={console.log(this.state.date)}
+                                value={this.state.date}
+                                onChange={date => this.setState({ date })}
+                            >
+                                <List.Item arrow="horizontal" className='data'></List.Item>
+                            </DatePicker>
+                        </div>
                     </div>
-                    <span style={{fontSize:".5rem",paddingTop:".5rem"}}>&nbsp;~</span>
-                    <div className='end'>
-                        <DatePicker
-                            mode="date"
-                            title=""
-                            extra="2020-09-10"
-                            onOk={console.log(this.state.date)}
-                            value={this.state.date}
-                            onChange={date => this.setState({ date })}
-                        >
-                            <List.Item arrow="horizontal" className='data'></List.Item>
-                        </DatePicker>
-                    </div>
-                    </div>
-
-
 
                     <div className='conten'>
                         <ul className='date_month'>
@@ -107,7 +98,7 @@ export default class Hot extends Component {
                             }
                         </ul>
                     </div>
-                
+
                 </div>
             </HotStyle>
         )

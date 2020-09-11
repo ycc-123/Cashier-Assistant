@@ -1,16 +1,30 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-
+import {mb_TotalMember} from 'network/Api'
 
 
 export default class MemberBusiness extends Component {
+    constructor(){
+        super()
+        this.state={
+            huiyuanzhong:''
+        }
+    }
+    componentDidMount(){
+        mb_TotalMember().then(res=>{
+            console.log(res.data.data.totalMembers)
+            this.setState({
+                huiyuanzhong:res.data.data.totalMembers
+            })
+        })
+    }
     render() {
         return (
             <MemberBusinessStyle>
             <div>
 
                 <div className='header_img'>
-                    <div className='memberzhong'>111</div>
+                    <div className='memberzhong'>{this.state.huiyuanzhong}</div>
                     <button className='btn'>查看详情</button>
                     <div className='bishu'>111</div>
                     <div className='money'>111</div>
