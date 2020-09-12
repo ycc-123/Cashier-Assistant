@@ -3,9 +3,6 @@ import { HashRouter as Router, withRouter } from 'react-router-dom'
 
 import TabBarItem from './TabBarItem'
 
-import CartNum from 'content/cartNum/CartNum'
-
-
 class TabBar extends Component {
   constructor(props) {
     super(props)
@@ -21,7 +18,6 @@ class TabBar extends Component {
     return (
       <Router>
         <footer className="tab-bar">
-          <CartNum />
           {this.state.tabArr.map((item, index) => {
             return (
               <TabBarItem active={this.props.history.location.pathname === item.path ? true : false}

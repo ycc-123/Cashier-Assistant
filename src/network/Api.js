@@ -35,7 +35,7 @@ export function get_store() {
 }
 
 
-// 会员
+// 会员储值
 export function mb_StoredTotal() {
 
   return requestPost({
@@ -47,3 +47,21 @@ export function mb_StoredTotal() {
     }
   })
 }
+
+export function mb_StoredValueOverview(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+export function mb_NewMember(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+

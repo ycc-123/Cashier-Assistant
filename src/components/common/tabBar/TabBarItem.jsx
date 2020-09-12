@@ -1,9 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { BrowserRouter as Router, } from 'react-router-dom'
 
-
-/* import Home from '../views/home/Home' */
-
 class TabBarItem extends Component {
   constructor(props) {
     super(props)

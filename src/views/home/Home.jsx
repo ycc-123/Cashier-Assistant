@@ -1,15 +1,11 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
-import { List, Picker, DatePicker } from 'antd-mobile';
-
-
-import TabBar from 'common/tabBar/TabBar'
-import styled from 'styled-components'
-
-
-
+import { List, Picker, DatePicker } from 'antd-mobile'
+import { get_store } from 'network/Api'
 
 import './style/home.css'
+import TabBar from 'common/tabBar/TabBar'
+import styled from 'styled-components'
 
 
 
@@ -21,7 +17,8 @@ class Home extends Component {
       date_month: [],
       key: "",
       value: null,
-      date: ''
+      date: '',
+      store:[]
     }
   }
   active(e, index) {
@@ -32,7 +29,15 @@ class Home extends Component {
     })
   }
   componentDidMount() {
-
+    get_store().then(res=>{
+      console.log(res.data.data)
+      res.data.data.map((value,key)=>{
+        console.log(value.name)
+      })
+      this.setState({
+        store:res.data.data
+      })
+    })
 
     this.setState({
       date_month: ["昨天", "今天", "本周", "本月"]
@@ -74,12 +79,9 @@ class Home extends Component {
           <div>
             <Picker
               extra="全部门店"
-              data={[
-                {
-                  value: 1,
-                  label: 1
-                }
-              ]} cols={1} className="forss">
+              data={this.state.store.map((value,key)=>{
+                return [{value:value,label:value}]
+              })} cols={1} className="forss">
               <List.Item arrow="horizontal" className='time'
                 style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
             </Picker>

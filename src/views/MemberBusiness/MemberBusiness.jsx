@@ -1,47 +1,157 @@
 import React, { Component } from 'react'
 import styled from 'styled-components'
-import {mb_TotalMember} from 'network/Api'
-
+import { mb_TotalMember, mb_StoredTotal, mb_NewMember, mb_StoredValueOverview } from 'network/Api'
 
 export default class MemberBusiness extends Component {
-    constructor(){
+    constructor() {
         super()
-        this.state={
-            huiyuanzhong:''
+        this.state = {
+            huiyuanzhong: '',
+            memberchuzhi: '',
+            shouyin: '2',
+            num: "",
+            Overview: []
         }
     }
-    componentDidMount(){
-        mb_TotalMember().then(res=>{
-            console.log(res.data.data.totalMembers)
+    componentDidMount() {
+        mb_StoredValueOverview({ action: 'mb_StoredValueOverview', data: { uniacid: 53, date: "今天" } }).then(res => {
             this.setState({
-                huiyuanzhong:res.data.data.totalMembers
+                Overview: res.data.data
+            })
+        })
+        mb_NewMember({ action: 'mb_NewMember', data: { uniacid: 53, date: "今天" } }).then(res => {
+            this.setState({
+                num: res.data.data.num
+            })
+        })
+        mb_StoredTotal().then(res => {
+            let memberchuzhi = res.data.data
+            this.setState({
+                memberchuzhi
+            })
+        })
+        mb_TotalMember().then(res => {
+            this.setState({
+                huiyuanzhong: res.data.data.totalMembers
             })
         })
     }
+    one(e, a) {
+        mb_StoredValueOverview({ action: 'mb_StoredValueOverview', data: { uniacid: 53, date: "昨天" } }).then(res => {
+            this.setState({
+                Overview: res.data.data
+            })
+        })
+        mb_NewMember({ action: 'mb_NewMember', data: { uniacid: 53, date: "昨天" } }).then(res => {
+            this.setState({
+                shouyin: a,
+                num: res.data.data.num
+            })
+        })
+
+    }
+    two(e, b) {
+        mb_StoredValueOverview({ action: 'mb_StoredValueOverview', data: { uniacid: 53, date: "今天" } }).then(res => {
+            this.setState({
+                Overview: res.data.data
+            })
+        })
+        mb_NewMember({ action: 'mb_NewMember', data: { uniacid: 53, date: "今天" } }).then(res => {
+            this.setState({
+                shouyin: b,
+                num: res.data.data.num
+
+            })
+        })
+
+    }
+    three(e, c) {
+        mb_StoredValueOverview({ action: 'mb_StoredValueOverview', data: { uniacid: 53, date: "近七天" } }).then(res => {
+            this.setState({
+                Overview: res.data.data
+            })
+        })
+        mb_NewMember({ action: 'mb_NewMember', data: { uniacid: 53, date: "近七天" } }).then(res => {
+            this.setState({
+                shouyin: c,
+                num: res.data.data.num
+            })
+        })
+
+    }
     render() {
+        let a = "1"
+        let b = "2"
+        let c = "3"
         return (
             <MemberBusinessStyle>
-            <div>
+                <div>
 
-                <div className='header_img'>
-                    <div className='memberzhong'>{this.state.huiyuanzhong}</div>
-                    <button className='btn'>查看详情</button>
-                    <div className='bishu'>111</div>
-                    <div className='money'>111</div>
-                    <div className='yure'>111</div>
-                    <div className='memberrensu'>222</div>
-                    <div className='bisu'>222</div>
-                    <div className='jiner'>333</div>
-                    <div className='danjia' >33333</div>
-                    <img className='h_img' src={require('assets/img/MemberBusiness.png')} alt=""/>
-                    
+                    <div className='header_img'>
+                        <div className='memberzhong'>{this.state.huiyuanzhong}</div>
+                        <button className='btn'>查看详情</button>
+                        <div className='bishu'>{this.state.memberchuzhi.count}</div>
+                        <div className='money'>{this.state.memberchuzhi.member_amount}</div>
+                        <div className='yure'>{this.state.memberchuzhi.members_sum}</div>
+                        <div className='memberrensu'>{this.state.num}</div>
+                        <div className='bisu'>{this.state.Overview.number}</div>
+                        <div className='jiner'>{this.state.Overview.money}</div>
+                        <div className='danjia' >{this.state.Overview.unitPrice}</div>
+                        <ul className='data'>
+                            <li className='one' onClick={(e) => { this.one(e, a) }} style={{ backgroundColor: this.state.shouyin === a ? "#2e5bff" : '', color: this.state.shouyin === a ? "#fff" : '' }}>昨天</li>
+                            <li className='two' onClick={(e) => { this.two(e, b) }} style={{ backgroundColor: this.state.shouyin === b ? "#2e5bff" : '', color: this.state.shouyin === b ? "#fff" : '' }}>今天</li>
+                            <li className='three' onClick={(e) => { this.three(e, c) }} style={{ backgroundColor: this.state.shouyin === c ? "#2e5bff" : '', color: this.state.shouyin === c ? "#fff" : '' }}>近七天</li>
+                        </ul>
+                        <img className='h_img' src={require('assets/img/MemberBusiness.png')} alt="" />
+
+                    </div>
                 </div>
-            </div>
             </MemberBusinessStyle>
         )
     }
 }
 const MemberBusinessStyle = styled.div`
+.data .two{
+    position:absolute;
+    top:5.7rem;
+    left:4.5rem;
+    border-radius: .5rem;
+    border: 1px solid #ccc;
+    color:#474747;
+    width:1.2rem;
+    height:.5rem;
+    line-height:.5rem;
+    text-align:center;
+}
+.data .three{
+    position:absolute;
+    top:5.7rem;
+    left:6.1rem;
+    border-radius: .5rem;
+    border: 1px solid #ccc;
+    color:#474747;
+    width:1.2rem;
+    height:.5rem;
+    line-height:.5rem;
+    text-align:center;
+}
+
+.data{
+    display:flex;
+    justify-content: space-around;
+}
+.data .one{
+    position:absolute;
+    top:5.7rem;
+    left:2.9rem;
+    border-radius: .5rem;
+    border: 1px solid #ccc;
+    color:#474747;
+    width:1.2rem;
+    height:.5rem;
+    line-height:.5rem;
+    text-align:center;
+}
 .btn{
     position:absolute;
     top:2.1rem;

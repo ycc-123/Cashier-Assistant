@@ -12,7 +12,7 @@ import 'assets/css/border.css'
 import 'assets/css/basic.css'
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={store}> 
     <PersistGate persistor={persistor}>
       <AppRouter />
     </PersistGate>
