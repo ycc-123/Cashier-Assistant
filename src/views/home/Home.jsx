@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { List, Picker, DatePicker } from 'antd-mobile'
-import { get_store } from 'network/Api'
+import { get_store, get_time ,pos_data_total} from 'network/Api'
 
 import './style/home.css'
 import TabBar from 'common/tabBar/TabBar'
 import styled from 'styled-components'
+
+// import { pos_data_total } from 'network/Api';
+
 
 
 
@@ -18,10 +21,49 @@ class Home extends Component {
       key: "",
       value: null,
       date: '',
-      store:[]
+      store: [],
+      data: [],
+      storeId: [],
+      start: '',
+      start_data: '',
+      end: '',
+      end_data: '',
+      time: '',
+      jkend: '',
+      jkstart: '',
+      today_time: '',
+      zhongsoul:''
     }
   }
+  // 普通时间转格林时间方法
+  StrToGMT(time) {
+    let GMT = new Date(time)
+    return GMT
+  }
+  // 选中事件
   active(e, index) {
+    let time = ''
+    if (index === 0) {
+      time = "昨天"
+    } else if (index === 1) {
+      time = "今天"
+    } else if (index === 2) {
+      time = "近七天"
+    } else if (index === 3) {
+      time = "本月"
+    }
+    get_time({ action: 'get_time', data: { date: time } }).then(res => {
+      let start = this.StrToGMT(res.data.data.start)
+      let end = this.StrToGMT(res.data.data.end)
+      this.setState({
+        start: start,
+        end: end
+      })
+    })
+    let w = JSON.stringify(this.state.storeId)
+    // 门店ID
+    let id = w.substring(2, 4)
+    console.log(id)
     this.setState({
       bgcolor: "#2e5bff",
       color: "#fff",
@@ -29,24 +71,33 @@ class Home extends Component {
     })
   }
   componentDidMount() {
-    get_store().then(res=>{
-      console.log(res.data.data)
-      res.data.data.map((value,key)=>{
-        console.log(value.name)
-      })
+    var day2 = new Date();
+    day2.setTime(day2.getTime());
+    var s2 = day2.getFullYear() + "-" + (day2.getMonth() + 1) + "-" + day2.getDate();
+    this.setState({
+      today_time: s2
+    })
+    pos_data_total({ action: 'pos_data_total', data: { end: s2,start: s2,store_id: "",uniacid: "53" } }).then(res=>{
+      console.log(res.data.data.total_pay)
       this.setState({
-        store:res.data.data
+        zhongsoul: res.data.data.total_pay
+      })
+    })
+    
+    get_store().then(res => {
+      var result = res.data.data.map(o => { return { value: o.id, label: o.name } });
+      let bb = [{ value: '', label: "全部门店" }]
+      this.setState({
+        data: [...bb, ...result]
       })
     })
 
     this.setState({
-      date_month: ["昨天", "今天", "本周", "本月"]
+      date_month: ["昨天", "今天", "近七天", "本月"],
+      key: 1
     })
   }
   render() {
-
-
-
     return (
       <HomeStyle>
         <div>
@@ -60,17 +111,7 @@ class Home extends Component {
               <div className='h_wen' style={{ color: "#fff" }}>全部门店</div>
               <div className='h_two_img'><img src="https://res.lexiangpingou.cn/images/826/2020/04/zltxzLUIITsQVlXv7AUV2XUVtXII4M.png" alt="" /></div>
             </div>
-            <Picker
-              extra="全部门店"
-              data={[
-                {
-                  value: 1,
-                  label: 1
-                }
-              ]} cols={1} className="forss">
-              <List.Item arrow="horizontal" className='time'
-                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
-            </Picker>
+
 
             <span className='left-img'>
               <img src="https://res.lexiangpingou.cn/images/826/2020/04/QahvVu2Bs6zPy6t6Ufb82ABa2PuNXh.png" alt="" />
@@ -79,25 +120,26 @@ class Home extends Component {
           <div>
             <Picker
               extra="全部门店"
-              data={this.state.store.map((value,key)=>{
-                return [{value:value,label:value}]
-              })} cols={1} className="forss">
-              <List.Item arrow="horizontal" className='time'
-                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}></List.Item>
+              value={this.state.storeId}
+              onOk={''}
+              onChange={data => this.setState({ storeId: data })}
+              data={this.state.data} cols={1} className="forss">
+              <List.Item
+                arrow="horizontal"
+                className='time'
+                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "-.07rem", left: "3.6rem" }}
+              ></List.Item>
             </Picker>
           </div>
-
-
-
           <div style={{ display: "flex" }}>
             <div className='start'>
               <DatePicker
                 mode="date"
                 title=""
-                extra="2020-09-10"
-                onOk={console.log(this.state.date)}
-                value={this.state.date}
-                onChange={date => this.setState({ date })}
+                extra={this.state.today_time}
+                onOk={''}
+                value={this.state.start}
+                onChange={start => this.setState({ start, start_data: start.getFullYear() + '-' + (start.getMonth() + 1) + '-' + start.getDate() })}
               >
                 <List.Item arrow="horizontal" className='data'></List.Item>
               </DatePicker>
@@ -107,10 +149,10 @@ class Home extends Component {
               <DatePicker
                 mode="date"
                 title=""
-                extra="2020-09-10"
-                onOk={console.log(this.state.date)}
-                value={this.state.date}
-                onChange={date => this.setState({ date })}
+                extra={this.state.today_time}
+                onOk={''}
+                value={this.state.end}
+                onChange={end => this.setState({ end, end_data: end.getFullYear() + '-' + (end.getMonth() + 1) + '-' + end.getDate() })}
               >
                 <List.Item arrow="horizontal" className='data'></List.Item>
               </DatePicker>
@@ -131,7 +173,16 @@ class Home extends Component {
           </div>
 
           <div className='homeb'>
-            <img src={require('assets/img/homeb.png')} alt=""/>
+            <img src={require('assets/img/3.png')} alt="" />
+            <img src={require('assets/img/4.png')} alt="" />
+            <img src={require('assets/img/5.png')} alt="" />
+            <img src={require('assets/img/6.png')} alt="" />
+            <div className='q_right_one'>{this.state.zhongsoul.now}</div>
+            <div className='q_left_one'>{this.state.zhongsoul.now}</div>
+            <div className='q_right_two'>{this.state.zhongsoul.now}</div>
+            <div className='q_left_two'>{this.state.zhongsoul.now}</div>
+
+
           </div>
 
           <div className='footer'>
@@ -146,7 +197,31 @@ class Home extends Component {
 }
 
 const HomeStyle = styled.div`
+.q_left_one{
+  position:absolute;
+  top:1.45rem;
+  left:.65rem;
+  width:3rem;
+  height:.5rem;
+  line-height:.5rem;
+  background-color:red;
+}
+.q_right_one{
+  position:absolute;
+  top:.8rem;
+  left:6.5rem;
+  width:2rem;
+  height:1rem;
+  line-height:1rem;
+  text-align:center;
+  background-color:red;
+}
+.homeb{
+  position:relative;
+
+}
 .homeb img{
+  
   width:100%;
   height:100%;
 }
