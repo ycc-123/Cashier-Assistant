@@ -7,11 +7,6 @@ import './style/home.css'
 import TabBar from 'common/tabBar/TabBar'
 import styled from 'styled-components'
 
-// import { pos_data_total } from 'network/Api';
-
-
-
-
 class Home extends Component {
   constructor() {
     super()
@@ -181,14 +176,20 @@ class Home extends Component {
             <div className='q_left_one'>{this.state.zhongsoul.now}</div>
             <div className='q_right_two'>{this.state.zhongsoul.now}</div>
             <div className='q_left_two'>{this.state.zhongsoul.now}</div>
+            <div className='q_right_three'>{this.state.zhongsoul.now}</div>
+            <div className='q_left_three'>{this.state.zhongsoul.now}</div>
 
+            <div className='maolier'>利额</div>
+            <div className='maolilu'>利lu</div>
+            <div className='kedanliang'>客单量</div>
+            <div className='kedanjia'>客单价</div>
+            <div className='chongzhi'>充值金额</div>
+            <div className='huiyuan'>会员客单价</div>
 
           </div>
 
           <div className='footer'>
-
           </div>
-
           <TabBar />
         </div>
       </HomeStyle>
@@ -197,6 +198,98 @@ class Home extends Component {
 }
 
 const HomeStyle = styled.div`
+.huiyuan{
+  position:absolute;
+  top:12.05rem;
+  left:6.5rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.chongzhi{
+  position:absolute;
+  top:12.05rem;
+  left:1.75rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.kedanjia{
+  position:absolute;
+  top:7.85rem;
+  left:6.5rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.kedanliang{
+  position:absolute;
+  top:7.85rem;
+  left:1.75rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.maolilu{
+  position:absolute;
+  top:3.45rem;
+  left:1.75rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.maolier{
+  position:absolute;
+  top:3.45rem;
+  left:6.5rem;
+  width:2rem;
+  height:.7rem;
+  line-height:.7rem;
+  background-color:red;
+}
+.q_left_three{
+  position:absolute;
+  top:9.45rem;
+  left:6.5rem;
+  width:2rem;
+  height:1rem;
+  line-height:1rem;
+  text-align:center;
+  background-color:red;
+}
+.q_right_three{
+  position:absolute;
+  top:10.05rem;
+  left:.65rem;
+  width:3rem;
+  height:.5rem;
+  line-height:.5rem;
+  background-color:red;
+}
+.q_left_two{
+  position:absolute;
+  top:5.1rem;
+  left:6.5rem;
+  width:2rem;
+  height:1rem;
+  line-height:1rem;
+  text-align:center;
+  background-color:red;
+}
+.q_right_two{
+  position:absolute;
+  top:5.8rem;
+  left:.65rem;
+  width:3rem;
+  height:.5rem;
+  line-height:.5rem;
+  background-color:red;
+}
 .q_left_one{
   position:absolute;
   top:1.45rem;
