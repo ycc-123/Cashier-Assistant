@@ -124,3 +124,24 @@ export function get_time(config) {
     data: config.data
   })
 }
+// 商品销量统计
+export function get_goods_category(config) {
+  return requestPost({
+    params: {
+      action: 'get_goods_category'
+    },
+    data: {
+      uniacid: 53
+    }
+  })
+}
+
+
+export function sale_goods_total(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}

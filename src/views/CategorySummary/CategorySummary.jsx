@@ -180,13 +180,7 @@ const HotStyle = styled.div`
     background-image: none;
     opacity:0;
     }
-    // .time{
-    //     position:absolute;
-    //     left:4rem;
-    //     top:-.3rem;
-    //     color: transparent;
-    //     background-color: transparent;
-    // }
+
     .am-list-arrow am-list-arrow-horizontal{
     background-image: none;
     opacity:0;

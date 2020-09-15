@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { List, Picker, DatePicker } from 'antd-mobile'
-import { get_store, get_time ,pos_data_total} from 'network/Api'
+import { get_store, get_time ,pos_data_total,pos_data_profit,pos_data_order,pos_data_customer,pos_data_member} from 'network/Api'
 
 import './style/home.css'
 import TabBar from 'common/tabBar/TabBar'
@@ -26,8 +26,19 @@ class Home extends Component {
       time: '',
       jkend: '',
       jkstart: '',
+      ptstart:'',
+      ptend:'',
       today_time: '',
-      zhongsoul:''
+      zhongsoul:'',
+      total_pay_details:[],
+      total_profit_rate:'',
+      total_profit:'',
+      total_order_num:'',
+      total_customer_price:'',
+      total_customer_num:'',
+      member_pay_price:'',
+      member_recharge:'',
+      member_customer_price:''
     }
   }
   // 普通时间转格林时间方法
@@ -37,6 +48,9 @@ class Home extends Component {
   }
   // 选中事件
   active(e, index) {
+    // 门店ID
+    let w = JSON.stringify(this.state.storeId)
+    let id = w.substring(2, 4)
     let time = ''
     if (index === 0) {
       time = "昨天"
@@ -47,7 +61,50 @@ class Home extends Component {
     } else if (index === 3) {
       time = "本月"
     }
+
     get_time({ action: 'get_time', data: { date: time } }).then(res => {
+      pos_data_total({ action: 'pos_data_total', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          zhongsoul: res.data.data.total_pay,
+          total_pay_details:res.data.data.total_pay_details
+        })
+      })
+      pos_data_profit({ action: 'pos_data_profit', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        if(res.data.data===undefined){
+
+        }else{
+          this.setState({
+            total_profit:res.data.data.total_profit.now,
+            total_profit_rate:res.data.data.total_profit_rate.now
+          })
+        }
+        
+      })
+      pos_data_order({ action: 'pos_data_order', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_order_num:res.data.data.total_order_num,
+        })
+      })
+      pos_data_customer({ action: 'pos_data_customer', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_customer_price:res.data.data.total_customer_price,
+          total_customer_num:res.data.data.total_customer_num,
+        })
+      })
+      pos_data_member({ action: 'pos_data_member', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          member_pay_price:res.data.data.member_pay_price,
+          member_customer_price:res.data.data.member_customer_price,
+          member_recharge:res.data.data.member_recharge
+        })
+      })
+
+
+      this.setState({
+        ptstart:res.data.data.start,
+        ptend:res.data.data.end
+      })
+      
       let start = this.StrToGMT(res.data.data.start)
       let end = this.StrToGMT(res.data.data.end)
       this.setState({
@@ -55,10 +112,30 @@ class Home extends Component {
         end: end
       })
     })
-    let w = JSON.stringify(this.state.storeId)
-    // 门店ID
-    let id = w.substring(2, 4)
-    console.log(id)
+    
+    // pos_data_total({ action: 'pos_data_total', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
+    //   this.setState({
+    //     zhongsoul: res.data.data.total_pay,
+    //     total_pay_details:res.data.data.total_pay_details
+    //   })
+    // })
+    // pos_data_profit({ action: 'pos_data_profit', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
+    //   this.setState({
+    //     total_profit:res.data.data.total_profit.now,
+    //     total_profit_rate:res.data.data.total_profit_rate.now
+    //   })
+    // })
+    // pos_data_order({ action: 'pos_data_order', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
+    //   console.log(res)
+    //   this.setState({
+    //     total_order_num:res.data.data.total_order_num,
+    //   })
+    // })
+    // pos_data_customer({ action: 'pos_data_order', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
+    // })
+    
+    
+    
     this.setState({
       bgcolor: "#2e5bff",
       color: "#fff",
@@ -72,12 +149,60 @@ class Home extends Component {
     this.setState({
       today_time: s2
     })
-    pos_data_total({ action: 'pos_data_total', data: { end: s2,start: s2,store_id: "",uniacid: "53" } }).then(res=>{
-      console.log(res.data.data.total_pay)
+    // 门店ID
+    let w = JSON.stringify(this.state.storeId)
+    let id = w.substring(2, 4)
+    get_time({ action: 'get_time', data: { date: "今天" } }).then(res => {
+      pos_data_total({ action: 'pos_data_total', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          zhongsoul: res.data.data.total_pay,
+          total_pay_details:res.data.data.total_pay_details
+        })
+      })
+      pos_data_profit({ action: 'pos_data_profit', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        if(res.data.data===undefined){
+
+        }else{
+          this.setState({
+            total_profit:res.data.data.total_profit.now,
+            total_profit_rate:res.data.data.total_profit_rate.now
+          })
+        }
+        
+      })
+      pos_data_order({ action: 'pos_data_order', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_order_num:res.data.data.total_order_num,
+        })
+      })
+      pos_data_customer({ action: 'pos_data_customer', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_customer_price:res.data.data.total_customer_price,
+          total_customer_num:res.data.data.total_customer_num,
+        })
+      })
+      pos_data_member({ action: 'pos_data_member', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          member_pay_price:res.data.data.member_pay_price,
+          member_customer_price:res.data.data.member_customer_price,
+          member_recharge:res.data.data.member_recharge
+        })
+      })
+
+
       this.setState({
-        zhongsoul: res.data.data.total_pay
+        ptstart:res.data.data.start,
+        ptend:res.data.data.end
+      })
+      
+      let start = this.StrToGMT(res.data.data.start)
+      let end = this.StrToGMT(res.data.data.end)
+      this.setState({
+        start: start,
+        end: end
       })
     })
+    
     
     get_store().then(res => {
       var result = res.data.data.map(o => { return { value: o.id, label: o.name } });
@@ -90,6 +215,60 @@ class Home extends Component {
     this.setState({
       date_month: ["昨天", "今天", "近七天", "本月"],
       key: 1
+    })
+  }
+  justStore(data){
+    let w = JSON.stringify(data)
+    let id = w.substring(2, 4)
+    get_time({ action: 'get_time', data: { date: "今天" } }).then(res => {
+      pos_data_total({ action: 'pos_data_total', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          zhongsoul: res.data.data.total_pay,
+          total_pay_details:res.data.data.total_pay_details
+        })
+      })
+      pos_data_profit({ action: 'pos_data_profit', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        if(res.data.data===undefined){
+
+        }else{
+          this.setState({
+            total_profit:res.data.data.total_profit.now,
+            total_profit_rate:res.data.data.total_profit_rate.now
+          })
+        }
+        
+      })
+      pos_data_order({ action: 'pos_data_order', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_order_num:res.data.data.total_order_num,
+        })
+      })
+      pos_data_customer({ action: 'pos_data_customer', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          total_customer_price:res.data.data.total_customer_price,
+          total_customer_num:res.data.data.total_customer_num,
+        })
+      })
+      pos_data_member({ action: 'pos_data_member', data: { end:res.data.data.end,start: res.data.data.start,store_id: id,uniacid: "53" } }).then(res=>{
+        this.setState({
+          member_pay_price:res.data.data.member_pay_price,
+          member_customer_price:res.data.data.member_customer_price,
+          member_recharge:res.data.data.member_recharge
+        })
+      })
+
+
+      this.setState({
+        ptstart:res.data.data.start,
+        ptend:res.data.data.end
+      })
+      
+      let start = this.StrToGMT(res.data.data.start)
+      let end = this.StrToGMT(res.data.data.end)
+      this.setState({
+        start: start,
+        end: end
+      })
     })
   }
   render() {
@@ -116,7 +295,7 @@ class Home extends Component {
             <Picker
               extra="全部门店"
               value={this.state.storeId}
-              onOk={''}
+              onOk={(data)=>{this.justStore(data)}}
               onChange={data => this.setState({ storeId: data })}
               data={this.state.data} cols={1} className="forss">
               <List.Item
@@ -173,18 +352,18 @@ class Home extends Component {
             <img src={require('assets/img/5.png')} alt="" />
             <img src={require('assets/img/6.png')} alt="" />
             <div className='q_right_one'>{this.state.zhongsoul.now}</div>
-            <div className='q_left_one'>{this.state.zhongsoul.now}</div>
-            <div className='q_right_two'>{this.state.zhongsoul.now}</div>
-            <div className='q_left_two'>{this.state.zhongsoul.now}</div>
-            <div className='q_right_three'>{this.state.zhongsoul.now}</div>
-            <div className='q_left_three'>{this.state.zhongsoul.now}</div>
+            <div className='q_left_one'>{this.state.zhongsoul.before}===={this.state.zhongsoul.compare}</div>
+            <div className='q_right_two'>{this.state.total_order_num.before}===={this.state.total_order_num.compare}</div>
+            <div className='q_left_two'>{this.state.total_order_num.now}</div>
+            <div className='q_right_three'>{this.state.member_pay_price.before}===={this.state.member_pay_price.compare}</div>
+            <div className='q_left_three'>{this.state.member_pay_price.now}</div>
 
-            <div className='maolier'>利额</div>
-            <div className='maolilu'>利lu</div>
-            <div className='kedanliang'>客单量</div>
-            <div className='kedanjia'>客单价</div>
-            <div className='chongzhi'>充值金额</div>
-            <div className='huiyuan'>会员客单价</div>
+            <div className='maolier'>{this.state.total_profit_rate}</div>
+            <div className='maolilu'>{this.state.total_profit}</div>
+            <div className='kedanliang'>{this.state.total_customer_num.now}</div>
+            <div className='kedanjia'>{this.state.total_customer_price.now}</div>
+            <div className='chongzhi'>{this.state.member_recharge.now}</div>
+            <div className='huiyuan'>{this.state.member_customer_price.now}</div>
 
           </div>
 
@@ -205,7 +384,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .chongzhi{
   position:absolute;
@@ -214,7 +393,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .kedanjia{
   position:absolute;
@@ -223,7 +402,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .kedanliang{
   position:absolute;
@@ -232,7 +411,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .maolilu{
   position:absolute;
@@ -241,7 +420,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .maolier{
   position:absolute;
@@ -250,7 +429,7 @@ const HomeStyle = styled.div`
   width:2rem;
   height:.7rem;
   line-height:.7rem;
-  background-color:red;
+  background-color:transparent;
 }
 .q_left_three{
   position:absolute;
@@ -260,7 +439,7 @@ const HomeStyle = styled.div`
   height:1rem;
   line-height:1rem;
   text-align:center;
-  background-color:red;
+  background-color:transparent;
 }
 .q_right_three{
   position:absolute;
@@ -269,7 +448,7 @@ const HomeStyle = styled.div`
   width:3rem;
   height:.5rem;
   line-height:.5rem;
-  background-color:red;
+  background-color:transparent;
 }
 .q_left_two{
   position:absolute;
@@ -279,7 +458,7 @@ const HomeStyle = styled.div`
   height:1rem;
   line-height:1rem;
   text-align:center;
-  background-color:red;
+  background-color:transparent;
 }
 .q_right_two{
   position:absolute;
@@ -288,7 +467,7 @@ const HomeStyle = styled.div`
   width:3rem;
   height:.5rem;
   line-height:.5rem;
-  background-color:red;
+  background-color:transparent;
 }
 .q_left_one{
   position:absolute;
@@ -297,7 +476,7 @@ const HomeStyle = styled.div`
   width:3rem;
   height:.5rem;
   line-height:.5rem;
-  background-color:red;
+  background-color:transparent;
 }
 .q_right_one{
   position:absolute;
@@ -307,7 +486,7 @@ const HomeStyle = styled.div`
   height:1rem;
   line-height:1rem;
   text-align:center;
-  background-color:red;
+  background-color:transparent;
 }
 .homeb{
   position:relative;
@@ -368,7 +547,7 @@ const HomeStyle = styled.div`
   margin:0 auto;
   width:100%;
   height:1rem;
-  background-color:red;
+  background-color:transparent;
   box-shadow: 0px 0px 20px #000;
 }
 .am-list-arrow am-list-arrow-horizontal{
