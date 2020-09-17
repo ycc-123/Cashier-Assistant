@@ -3,46 +3,64 @@ import styled from 'styled-components'
 import { List, Picker, DatePicker } from 'antd-mobile';
 import { get_store, get_goods_category, sale_goods_total } from 'network/Api'
 
-// function Goods(value){
-//     return(
-//         <div className='goods'>
-//             <img src={require('assets/img/good.png')} alt=""/>
-//         </div>
-//     )
-// }
+function Goods(value) {
+    let item = value.value
+    return (
+        <div className='goods'>
+            <img src={require('assets/img/good.png')} alt="" />
+            <div className='store_name'>{item.store_name}</div>
+            <div className='good_name'>{item.goods_name}</div>
+            <div className='barcode'>{item.barcode}</div>
+            <div className='fenglei'>{item.category_name}</div>
+            <div className='unitone'>{item.unitname}</div>
+            <div className='unittwo'>{item.unitname}</div>
+            <div className='xianshouer'>{item.total_pay}</div>
+            <div className='xiaoshoulian'>{item.total_num}</div>
+        </div >
+    )
+}
 
 export default class SalesVolume extends Component {
     constructor(props) {
         super()
         this.state = {
+            inputAmount: '',
             data: [],
             storeId: '',
             fenlei: [],
             fenleiId: '',
             today_time: '',
-            sale_by_goods: []
+            sale_by_goods: [],
+            start: '',
+            end: '',
+            start_data: "",
+            end_data: ""
 
         }
     }
     componentDidMount() {
+
         var day2 = new Date();
         day2.setTime(day2.getTime());
         var s2 = day2.getFullYear() + "-" + (day2.getMonth() + 1) + "-" + day2.getDate();
+
         this.setState({
-            today_time: s2
+            today_time: "2020-04-30",
+            start_data: "2020-04-01",
+            end_data: s2
         })
         get_store().then(res => {
             var result = res.data.data.map(o => { return { value: o.id, label: o.name } });
-            let bb = [{ value: '', label: "全部门店" }]
+            let bb = [{ value:"  ", label: "全部门店" }]
             this.setState({
                 data: [...bb, ...result]
             })
         })
         get_goods_category().then(res => {
-            console.log(res)
+            // console.log(res)
             var result = res.data.data.category_list.map(o => { return { value: o.id, label: o.name } });
-            let bb = [{ value: '', label: "全部分类" }]
-            console.log([...bb, ...result])
+            let bb = [{ value:"  ", label: "全部分类" }]
+            // console.log([...bb, ...result])
             this.setState({
                 fenlei: [...bb, ...result]
             })
@@ -51,12 +69,141 @@ export default class SalesVolume extends Component {
             action: 'sale_goods_total',
             data: { categoryid: "", end: "2020-04-30", search: "", start: "2020-04-01", store_id: "", uniacid: "53" }
         }).then(res => {
-            console.log(res)
+            // console.log(res)
             this.setState({
                 sale_by_goods: res.data.data.sale_by_goods
             })
         })
 
+    }
+    search() {
+        let w = JSON.stringify(this.state.storeId)
+        let id = w.substring(2, 4)
+        let fenlei = JSON.stringify(this.state.fenleiId)
+        let fenleiid = fenlei.substring(2, 4)
+        if(id==="  "){
+            id=""
+            this.setState({
+                data:""
+            })
+        }
+        sale_goods_total({
+            action: 'sale_goods_total',
+            data: { categoryid: fenleiid, end: this.state.end_data, search: this.state.inputAmount, start: this.state.start_data, store_id: id, uniacid: "53" }
+        }).then(res => {
+            // console.log(res)
+            if (res.data.data === undefined) {
+                this.setState({
+                    sale_by_goods: []
+                })
+            } else {
+                this.setState({
+                    sale_by_goods: res.data.data.sale_by_goods ? res.data.data.sale_by_goods : ''
+                })
+            }
+        })
+
+    }
+    inputChange(e) {
+        let name = e.target.name
+        let value = e.target.value
+        // console.log(value)
+        this.setState({
+            [name]: value
+        })
+    }
+    xzmdian(data) {
+        let w = JSON.stringify(data)
+        let id = w.substring(2, 4)
+        let fenlei = JSON.stringify(this.state.fenleiId)
+        let fenleiid = fenlei.substring(2, 4)
+        if(id==="  "){
+            id=""
+            this.setState({
+                data:""
+            })
+        }
+        
+
+        sale_goods_total({
+            action: 'sale_goods_total',
+            data: { categoryid: fenleiid, end: this.state.end_data, search: this.state.inputAmount, start: this.state.start_data, store_id: id, uniacid: "53" }
+        }).then(res => {
+            // console.log(res)
+            if (res.data.data === undefined) {
+                this.setState({
+                    sale_by_goods: []
+                })
+            } else {
+                this.setState({
+                    sale_by_goods: res.data.data.sale_by_goods ? res.data.data.sale_by_goods : ''
+                })
+            }
+        })
+
+    }
+    fenleis(e) {
+        // console.log("qqq")
+        let w = JSON.stringify(this.state.storeId)
+        let id = w.substring(2, 4)
+        let fenlei = JSON.stringify(e)
+        let fenleiid = fenlei.substring(2, 4)
+        if(fenleiid==="  "){
+            fenleiid=""
+            this.setState({
+                fenleiId:""
+            })
+        }
+        if(id==="  "){
+            id=""
+            this.setState({
+                data:""
+            })
+        }
+        sale_goods_total({
+            action: 'sale_goods_total',
+            data: { categoryid: fenleiid, end: this.state.end_data, search: this.state.inputAmount, start: this.state.start_data, store_id: id, uniacid: "53" }
+        }).then(res => {
+            // console.log(res)
+            if (res.data.data === undefined) {
+                this.setState({
+                    sale_by_goods: []
+                })
+            } else {
+                this.setState({
+                    sale_by_goods: res.data.data.sale_by_goods ? res.data.data.sale_by_goods : ''
+                })
+            }
+        })
+    }
+    times(e) {
+        // console.log(e)
+        let end = e.getFullYear() + '-' + (e.getMonth() + 1) + '-' + e.getDate()
+        let w = JSON.stringify(this.state.storeId)
+        let id = w.substring(2, 4)
+        let fenlei = JSON.stringify(this.state.fenleiId)
+        let fenleiid = fenlei.substring(2, 4)
+        if(id==="  "){
+            id=""
+            this.setState({
+                data:""
+            })
+        }
+        sale_goods_total({
+            action: 'sale_goods_total',
+            data: { categoryid: fenleiid, end: end, search: this.state.inputAmount, start: this.state.start_data, store_id: id, uniacid: "53" }
+        }).then(res => {
+            console.log(res)
+            if (res.data.data === undefined) {
+                this.setState({
+                    sale_by_goods: []
+                })
+            } else {
+                this.setState({
+                    sale_by_goods: res.data.data.sale_by_goods ? res.data.data.sale_by_goods : ''
+                })
+            }
+        })
     }
     render() {
         return (
@@ -64,14 +211,16 @@ export default class SalesVolume extends Component {
                 <div>
                     <div className='hearder'>
                         <img src={require('assets/img/search.png')} alt="" />
-                        <input type="text" className='input' />
-                        <button className='search_btn'>搜索</button>
+                        <input type="text" className='input' placeholder='请输入商品名称/商品编码/国际条形码' onChange={this.inputChange.bind(this)}
+                            value={this.state.inputAmount}
+                            name="inputAmount" />
+                        <button className='search_btn' onClick={() => { this.search() }}>搜索</button>
                     </div>
                     <div style={{ position: "relative" }}>
                         <Picker
                             extra="全部门店"
                             value={this.state.storeId}
-                            onOk={''}
+                            onOk={(data) => { this.xzmdian(data) }}
                             onChange={data => this.setState({ storeId: data })}
                             data={this.state.data} cols={1} className="forss">
                             <List.Item
@@ -85,7 +234,7 @@ export default class SalesVolume extends Component {
                         <Picker
                             extra="全部分类"
                             value={this.state.fenleiId}
-                            onOk={''}
+                            onOk={(fenlei) => { this.fenleis(fenlei) }}
                             onChange={fenlei => this.setState({ fenleiId: fenlei })}
                             data={this.state.fenlei} cols={1} className="forss">
                             <List.Item
@@ -117,7 +266,7 @@ export default class SalesVolume extends Component {
                                 mode="date"
                                 title=""
                                 extra={this.state.today_time}
-                                onOk={''}
+                                onOk={(end) => { this.times(end) }}
                                 value={this.state.end}
                                 onChange={end => this.setState({ end, end_data: end.getFullYear() + '-' + (end.getMonth() + 1) + '-' + end.getDate() })}
                             >
@@ -130,25 +279,17 @@ export default class SalesVolume extends Component {
                     </div>
                     <div style={{ width: "100%", height: ".7rem" }}></div>
                     <div className='Goods'>
-                        {/* {
-                            this.state.sale_by_goods.map((value,key)=>{
-                                return(
+                        {
+                            this.state.sale_by_goods.map((value, key) => {
+                                return (
                                     <div key={key}>
-                                    <Goods value={value}/>
+                                        <Goods value={value} />
                                     </div>
                                 )
-                                
-                            })
-                        } */}
-                        <div className='goods'>
-                            <img src={require('assets/img/good.png')} alt="" />
-                            <div className=''></div>
-                            <div className=''></div>
-                            <div className=''></div>
-                            <div className=''></div>
-                            <div className=''></div>
 
-                        </div>
+                            })
+                        }
+
                     </div>
                 </div>
             </SalesVolumeStyle>
@@ -156,8 +297,54 @@ export default class SalesVolume extends Component {
     }
 }
 const SalesVolumeStyle = styled.div`
-.goods img{
+.barcode{
+    position:absolute;
+    top:1.3rem;
+    left: 2.8rem;
+}
+.xiaoshoulian{
+    position:absolute;
+    top:2.4rem;
+    left: 7.9rem;
+}
+.xianshouer{
+    position:absolute;
+    top:2.9rem;
+    left:7.9rem;
+}
+.unittwo{
+    position:absolute;
+    top:2.9rem;
+    left: 2.2rem;
+}
+.unitone{
+    position:absolute;
+    top:2.45rem;
+    left: 2.2rem;
+}
+.fenglei{
+    position:absolute;
+    top:2rem;
+    left: 1.5rem;
+}
+.good_name{
+    position:absolute;
+    top:1.3rem;
+    left: .7rem;
+}
+.store_name{
+    position:absolute;
+    top:.4rem;
+    left:1.5rem;
+}
+.goods{
+    position:relative;
+    // background-color:red;
+    // height:2rem;
+    // width:2rem;
 
+}
+.goods img{
     width:100%;
     height:100%;
 }
@@ -193,7 +380,7 @@ const SalesVolumeStyle = styled.div`
     border-radius: .5rem;
 }
 .input{
-    width:5rem;
+    width:7rem;
     height:.6rem;
     background-color:transparent;
     border:none;

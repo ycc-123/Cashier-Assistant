@@ -12,17 +12,18 @@ export function requestPost(config) {
   })
 
   // 拦截器
-  instance.interceptors.request.use(config => {
-    // console.log(config)
-    return config
-  }, err => {
-    console.log(err)
-    return Promise.reject(err)
-  })
+  // instance.interceptors.request.use(config => {
+  //   // console.log(config)
+  //   return config
+  // }, err => {
+  //   // console.log(err)
+  //   return Promise.reject(err)
+  // })
+ 
   instance.interceptors.response.use(config => {
     return config
   }, err => {
-    console.log(err)
+    // console.log(err)
     return Promise.reject(err)
   })
   return instance(config)
@@ -30,7 +31,7 @@ export function requestPost(config) {
 
 // export function requestPost(config) {
 
-//   let baseUrl = JSON.parse(window.localStorage.getItem('baseUrl')) || 'https://dev.huodiesoft.com/posdataapi.php'
+//   let baseUrl = 'https://dev.huodiesoft.com/posdataapi.php'
 
 //   if(baseUrl !== null){
 //     config.data.timestamp = new Date().getTime()

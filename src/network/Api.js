@@ -145,3 +145,32 @@ export function sale_goods_total(config) {
     data: config.data
   })
 }
+// 退款页面接口
+export function refund_by_oroder_all(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+
+export function refund_by_oroder_piece(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+
+
+
+
+
+
+
+
+
+
+

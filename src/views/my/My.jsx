@@ -23,11 +23,13 @@ class My extends Component {
             <div className='three' onClick={()=>{this.props.history.push('/timeManage')}}></div>
             <div className='four' onClick={()=>{this.props.history.push('/MemberBusiness')}}></div>
             <div className='five' onClick={()=>{this.props.history.push('/CollectionCompose')}}></div>
-            <div className='six' onClick={()=>{this.props.history.push('/ShoppingGuide')}}></div>
+            <div className='six' onClick={()=>{this.props.history.push('/ShoppingGuide')}}>
+              <img className='tuikuan' src={require('assets/img/tuikuan.png')} alt=""/> 
+              </div>
             <div className='seven' onClick={()=>{this.props.history.push('/Hot')}}></div>
             <div className='eight' ></div>
             <div className='night' ></div>
-          <img src={require('assets/img/shujubaobiao.png')} alt=""/>
+          <img style={{width:"100%",height:"100%"}} src={require('assets/img/shujubaobiao.png')} alt=""/>
         </div>
         <div className='footer'></div>
         <TabBar />
@@ -62,13 +64,18 @@ const MyStyle = styled.div`
   height:2.5rem;
   width:2.3rem;
 }
+.six .tuikuan{
+
+  width:100%;
+  // height:100%;
+}
 .six{
   position:absolute;
-  top:3.5rem;
-  left:7rem;
+  top:3.8rem;
+  left:7.3rem;
   background-color:transparent;
-  height:2.5rem;
-  width:2.3rem;
+  height:2.2rem;
+  width:1.6rem;
 }
 .five{
   position:absolute;
@@ -119,10 +126,6 @@ const MyStyle = styled.div`
 .conten{
   position:relative;
   height:15rem;
-}
-.conten img{
-  height:100%;
-  width:100%;
 }
 .footer{
   height:1rem;
