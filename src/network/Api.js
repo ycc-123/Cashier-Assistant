@@ -163,6 +163,44 @@ export function refund_by_oroder_piece(config) {
     data: config.data
   })
 }
+// Top10
+export function get_top_goods(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+// 收款构成
+export function sale_goods_by_payType(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+
+export function recharge_by_payType_store(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+
+export function recharge_by_store(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
+
+
 
 
 

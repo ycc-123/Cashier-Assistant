@@ -31,7 +31,7 @@ export default class Goods extends Component {
                 <div className='order'>{item.orderno}</div>
                 {
                     goods.map((value, index) => {
-                        console.log(value)
+                        // console.log(value)
                         return (
                             <ul key={index}>
                                 <li className='good_name'>{value.goods_name}</li>

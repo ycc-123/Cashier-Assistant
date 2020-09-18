@@ -36,6 +36,17 @@ export default class ShoppingGuide extends Component {
     }
     // 选中事件
     active(e, index) {
+        // 门店ID
+        
+        let w = JSON.stringify(this.state.storeId)
+        let id= w.substring(2, 4)
+        if(id==="  "){
+            id=""
+           
+        }
+        
+        
+        
         let time = ''
         if (index === 0) {
             time = "昨天"
@@ -47,11 +58,30 @@ export default class ShoppingGuide extends Component {
             time = "本月"
         }
         get_time({ action: 'get_time', data: { date: time } }).then(res => {
-            let start = this.StrToGMT(res.data.data.start)
-            let end = this.StrToGMT(res.data.data.end)
+            console.log(res.data.data.end)
+            let end= res.data.data.end 
+            let start =res.data.data.start
+            refund_by_oroder_piece({
+                action: 'refund_by_oroder_piece',
+                data: { end: end, start: start, store_id: id, uniacid: "53" }
+            }).then(res => {
+                
+                this.setState({
+                    refund_order: res.data.data.refund_order,
+    
+                })
+            })
+            refund_by_oroder_all({
+                action: 'refund_by_oroder_all',
+                data: { end: end, start: start, store_id: id, uniacid: "53" }
+            }).then(res => {
+    
+            })
+            let starts = this.StrToGMT(res.data.data.start)
+            let ends = this.StrToGMT(res.data.data.end)
             this.setState({
-                start: start,
-                end: end
+                start: starts,
+                end: ends
             })
         })
         // let w = JSON.stringify(this.state.storeId)
@@ -73,7 +103,7 @@ export default class ShoppingGuide extends Component {
         })
         get_store().then(res => {
             var result = res.data.data.map(o => { return { value: o.id, label: o.name } });
-            let bb = [{ value: '', label: "全部门店" }]
+            let bb = [{ value:"  ", label: "全部门店" }]
             this.setState({
                 data: [...bb, ...result]
             })

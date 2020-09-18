@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { List, Picker, DatePicker } from 'antd-mobile';
 
 import { get_store, get_time } from 'network/Api';
+import F2 from '@antv/f2'
 
 export default class CategorySummary extends Component {
     constructor() {
@@ -61,6 +62,57 @@ export default class CategorySummary extends Component {
         })
     }
     componentDidMount() {
+
+        const data = [{
+            year: '1951 年',
+            sales: 38
+          }, {
+            year: '1952 年',
+            sales: 52
+          }, {
+            year: '1956 年',
+            sales: 61
+          }, {
+            year: '1957 年',
+            sales: 145
+          }, {
+            year: '1958 年',
+            sales: 48
+          }, {
+            year: '1959 年',
+            sales: 38
+          }, {
+            year: '1960 年',
+            sales: 38
+          }, {
+            year: '1962 年',
+            sales: 38
+          }];
+        const chart = new F2.Chart({
+            id: 'mountNode',
+            pixelRatio: window.devicePixelRatio
+          });
+          
+          chart.source(data, {
+            sales: {
+              tickCount: 5
+            }
+          });
+          chart.coord({
+            transposed: true
+          });
+          chart.tooltip({
+            showItemMarker: false,
+            onShow: function onShow(ev) {
+              const items = ev.items;
+              items[0].name = null;
+              items[0].name = items[0].title;
+              items[0].value = '¥ ' + items[0].value;
+            }
+          });
+          chart.interval().position('year*sales');
+          chart.render();
+        
         var day2 = new Date();
         day2.setTime(day2.getTime());
         var s2 = day2.getFullYear() + "-" + (day2.getMonth() + 1) + "-" + day2.getDate();
@@ -148,6 +200,7 @@ export default class CategorySummary extends Component {
                             }
                         </ul>
                     </div>
+                    <canvas id="mountNode"></canvas>
                 </div>
             </HotStyle>
         )
