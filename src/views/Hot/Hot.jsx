@@ -92,9 +92,9 @@ export default class Hot extends Component {
                 end: end
             })
         })
-        let w = JSON.stringify(this.state.storeId)
+        // let w = JSON.stringify(this.state.storeId)
         // 门店ID
-        let id = w.substring(2, 4)
+        // let id = w.substring(2, 4)
         // console.log(id)
         this.setState({
             bgcolor: "#2e5bff",

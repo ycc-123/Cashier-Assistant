@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { List, Picker, DatePicker } from 'antd-mobile';
 
 import { get_store, get_time } from 'network/Api';
-import F2 from '@antv/f2'
+import F2 from "@antv/f2/lib/index-all"
 
 export default class CategorySummary extends Component {
     constructor() {
@@ -64,53 +64,70 @@ export default class CategorySummary extends Component {
     componentDidMount() {
 
         const data = [{
-            year: '1951 年',
-            sales: 38
+            const: 'const',
+            type: '交通出行',
+            money: 51.39
           }, {
-            year: '1952 年',
-            sales: 52
+            const: 'const',
+            type: '饮食',
+            money: 356.68
           }, {
-            year: '1956 年',
-            sales: 61
+            const: 'const',
+            type: '生活日用',
+            money: 20.00
           }, {
-            year: '1957 年',
-            sales: 145
-          }, {
-            year: '1958 年',
-            sales: 48
-          }, {
-            year: '1959 年',
-            sales: 38
-          }, {
-            year: '1960 年',
-            sales: 38
-          }, {
-            year: '1962 年',
-            sales: 38
+            const: 'const',
+            type: '住房缴费',
+            money: 116.53
           }];
-        const chart = new F2.Chart({
+          const chart = new F2.Chart({
             id: 'mountNode',
+            width:400,
+            height:400,
             pixelRatio: window.devicePixelRatio
           });
-          
-          chart.source(data, {
-            sales: {
-              tickCount: 5
+          chart.source(data);
+          chart.coord('polar', {
+            transposed: true,
+            radius: 0.9,
+            innerRadius: 0.5
+          });
+          chart.axis(false);
+          chart.legend(false);
+          chart.tooltip(false);
+          chart.guide()
+            .html({
+              position: [ '50%', '50%' ],
+              html: '<div style="text-align: center;width:150px;height: 50px;">\n      <p style="font-size: 12px;color: #999;margin: 0" id="title"></p>\n      <p style="font-size: 18px;color: #343434;margin: 0;font-weight: bold;" id="money"></p>\n      </div>'
+            });
+          chart.interval()
+            .position('const*money')
+            .adjust('stack')
+            .color('type', [ '#1890FF', '#13C2C2', '#2FC25B', '#FACC14' ]);
+          chart.pieLabel({
+            sidePadding: 30,
+            activeShape: true,
+            label1: function label1(data) {
+              return {
+                text: '￥' + data.money,
+                fill: '#343434',
+                fontWeight: 'bold'
+              };
+            },
+            label2: function label2(data) {
+              return {
+                text: data.type,
+                fill: '#999'
+              };
+            },
+            onClick: function onClick(ev) {
+              const data = ev.data;
+              if (data) {
+                // document.getElementById('title').text(data.type);
+                // document.getElementById('money').text(data.money);
+              }
             }
           });
-          chart.coord({
-            transposed: true
-          });
-          chart.tooltip({
-            showItemMarker: false,
-            onShow: function onShow(ev) {
-              const items = ev.items;
-              items[0].name = null;
-              items[0].name = items[0].title;
-              items[0].value = '¥ ' + items[0].value;
-            }
-          });
-          chart.interval().position('year*sales');
           chart.render();
         
         var day2 = new Date();

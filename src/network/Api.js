@@ -65,6 +65,8 @@ export function mb_NewMember(config) {
   })
 }
 // 首页接口
+
+
 export function pos_data_total(config) {
   return requestPost({
     params: {
@@ -200,6 +202,14 @@ export function recharge_by_store(config) {
   })
 }
 
+export function sale_goods_by_time(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
 
 
 

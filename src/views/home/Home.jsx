@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 import { List, Picker, DatePicker } from 'antd-mobile'
-import { get_store, get_time ,pos_data_total,pos_data_profit,pos_data_order,pos_data_customer,pos_data_member} from 'network/Api'
-
+import { get_store, get_time ,pos_data_total,pos_data_profit,pos_data_order,pos_data_customer,pos_data_member,pos_data_trend} from 'network/Api'
+import BetterScroll from 'common/betterScroll/BetterScroll'
 import './style/home.css'
 import TabBar from 'common/tabBar/TabBar'
 import styled from 'styled-components'
-
+import _ from 'lodash';
+import F2 from '@antv/f2';
 class Home extends Component {
   constructor() {
     super()
@@ -38,7 +39,9 @@ class Home extends Component {
       total_customer_num:'',
       member_pay_price:'',
       member_recharge:'',
-      member_customer_price:''
+      member_customer_price:'',
+      foot:'',
+      footId:''
     }
   }
   // 普通时间转格林时间方法
@@ -113,28 +116,6 @@ class Home extends Component {
       })
     })
     
-    // pos_data_total({ action: 'pos_data_total', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
-    //   this.setState({
-    //     zhongsoul: res.data.data.total_pay,
-    //     total_pay_details:res.data.data.total_pay_details
-    //   })
-    // })
-    // pos_data_profit({ action: 'pos_data_profit', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
-    //   this.setState({
-    //     total_profit:res.data.data.total_profit.now,
-    //     total_profit_rate:res.data.data.total_profit_rate.now
-    //   })
-    // })
-    // pos_data_order({ action: 'pos_data_order', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
-    //   console.log(res)
-    //   this.setState({
-    //     total_order_num:res.data.data.total_order_num,
-    //   })
-    // })
-    // pos_data_customer({ action: 'pos_data_order', data: { end:this.state.ptend,start: this.state.ptstart,store_id: id,uniacid: "53" } }).then(res=>{
-    // })
-    
-    
     
     this.setState({
       bgcolor: "#2e5bff",
@@ -143,6 +124,82 @@ class Home extends Component {
     })
   }
   componentDidMount() {
+    pos_data_trend({ action: 'pos_data_trend', data: { end: "2020-09-19 23:59:59",
+    start: "2020-09-19 00:00:00",
+    store_id: "",
+    uniacid: "53"} }).then(res=>{
+      console.log(res.data.data.price)
+      var yye =res.data.data.num.trend.map(o => { 
+        return { value: Number(o.num), date: o.time.substring(0,4)+"-"+o.time.substring(4,6)+"-"+o.time.substring(6,8) ,type:"营业额"}
+    });
+      var hyxse =res.data.data.num.member_trend.map(o => { 
+        return { value: Number(o.num), date: o.time.substring(0,4)+"-"+o.time.substring(4,6)+"-"+o.time.substring(6,8) ,type:"会员销售额"}
+    });
+      var tkzr =res.data.data.num.refund_trend.map(o => { 
+        return { value: Number(o.num), date: o.time.substring(0,4)+"-"+o.time.substring(4,6)+"-"+o.time.substring(6,8) ,type:"退款总额"}
+    });
+      var result = res.data.data.num.recharge_trend.map(o => {
+        return { value: Number(o.num), date: o.time.substring(0,4)+"-"+o.time.substring(4,6)+"-"+o.time.substring(6,8) ,type:"充值金额"}
+    });
+    let arr=[...yye,...hyxse,...tkzr,...result]
+    const chart = new F2.Chart({
+      id: 'container',
+      width:380,
+      height:200,
+      pixelRatio: window.devicePixelRatio
+    });
+    chart.source(arr);
+    chart.scale('date', {
+      type: 'timeCat',
+      tickCount: 3
+    });
+    chart.scale('value', {
+      tickCount: 5
+    });
+    chart.axis('date', {
+      label: function label(text, index, total) {
+        // 只显示每一年的第一天
+        const textCfg = {};
+        if (index === 0) {
+          textCfg.textAlign = 'left';
+        } else if (index === total - 1) {
+          textCfg.textAlign = 'right';
+        }
+        return textCfg;
+      }
+    });
+    chart.tooltip({
+      custom: true, // 自定义 tooltip 内容框
+      onChange: function onChange(obj) {
+        const legend = chart.get('legendController').legends.top[0];
+        const tooltipItems = obj.items;
+        const legendItems = legend.items;
+        const map = {};
+        legendItems.forEach(function(item) {
+          map[item.name] = _.clone(item);
+        });
+        tooltipItems.forEach(function(item) {
+          const name = item.name;
+          const value = item.value;
+          if (map[name]) {
+            map[name].value = value;
+          }
+        });
+        legend.setItems(_.values(map));
+      },
+      onHide: function onHide() {
+        const legend = chart.get('legendController').legends.top[0];
+        legend.setItems(chart.getLegendItems().country);
+      }
+    });
+    chart.line().position('date*value').color('type');
+    chart.render();
+    })
+    // member_trend,recharge_trend,refund_trend,trend
+
+    
+
+
     var day2 = new Date();
     day2.setTime(day2.getTime());
     var s2 = day2.getFullYear() + "-" + (day2.getMonth() + 1) + "-" + day2.getDate();
@@ -268,13 +325,31 @@ class Home extends Component {
       this.setState({
         start: start,
         end: end
+      },()=>{
+        this.refs.scroll.BScroll.refresh()
       })
     })
   }
+  foot(foot){
+    let aa=JSON.stringify(foot)
+    let ji=aa.substring(1, 2)
+    if(Number(ji) === 1){
+      console.log("111")
+    }else{
+      console.log("222")
+
+    }
+  }
   render() {
+    const scrollConfig = {
+      probeType: 10
+  }
+ 
     return (
-      <HomeStyle>
+      <HomeStyle> 
         <div>
+        <BetterScroll config={scrollConfig}  ref='scroll'>
+       
           <div className='header'>
             <span className='right-img'>
               <img src="https://res.lexiangpingou.cn/images/826/2020/04/zZWiIZSwf62zisqkp7s7ij6ipypwri.png" alt="" />
@@ -368,15 +443,38 @@ class Home extends Component {
           </div>
 
           <div className='footer'>
+              <Picker
+              extra="销售额走势"
+              value={this.state.footId}
+              onOk={(foot)=>{this.foot(foot)}}
+              onChange={foot => this.setState({ footId: foot })}
+              data={[{value:1,label:"销售额走势"},{value:2,label:"订单量走势"}]} cols={1} className="forss">
+              <List.Item
+                arrow="horizontal"
+                className='time'
+                style={{ width: "2.3rem", backgroundColor: "transparent", position: "absolute", top: "15.8rem", left: "-.5" }}
+              ></List.Item>
+            </Picker>
+            <div className='tubiao'>
+              <canvas id="container"></canvas>
+            </div>
           </div>
+          </BetterScroll>
           <TabBar />
         </div>
+        
       </HomeStyle>
     )
   }
 }
 
 const HomeStyle = styled.div`
+.tubiao{
+  margin-top:.5rem;
+  height:13rem;
+  width:10rem;
+
+}
 .huiyuan{
   position:absolute;
   top:12.05rem;
