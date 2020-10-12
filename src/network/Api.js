@@ -212,6 +212,14 @@ export function sale_goods_by_time(config) {
 }
 
 
+export function mb_Trend(config) {
+  return requestPost({
+    params: {
+      action: config.action
+    },
+    data: config.data
+  })
+}
 
 
 
